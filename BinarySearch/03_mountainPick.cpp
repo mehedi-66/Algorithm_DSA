@@ -32,7 +32,7 @@ int findPick(int arr[], int n)
             e = mid;
         }
 
-        mid = s + (e - 1);
+        mid = s + (e - s)/2;
     }
 
     return s;
