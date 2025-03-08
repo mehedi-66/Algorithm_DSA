@@ -51,14 +51,71 @@
 
 
 
+Watch : => 
 
+https://www.youtube.com/watch?v=-dUiRtJ8ot0
 
 */
-#include<bits/stdc++.h>
-using namespace std;
-int main()
+using System;
+
+class SegmentTree
 {
+    private int[] tree;
+    private int n;
 
+    // Build the segment tree
+    public SegmentTree(int[] arr)
+    {
+        n = arr.Length;
+        tree = new int[4 * n];  // Allocate sufficient space
+        Build(arr, 0, 0, n - 1);
+    }
 
-    return 0;
+    private void Build(int[] arr, int node, int start, int end)
+    {
+        if (start == end)
+        {
+            tree[node] = arr[start]; // Leaf node
+        }
+        else
+        {
+            int mid = (start + end) / 2;
+            Build(arr, 2 * node + 1, start, mid);
+            Build(arr, 2 * node + 2, mid + 1, end);
+            tree[node] = Math.Min(tree[2 * node + 1], tree[2 * node + 2]);
+        }
+    }
+
+    // Range minimum query
+    public int Query(int left, int right)
+    {
+        return Query(0, 0, n - 1, left, right);
+    }
+
+    private int Query(int node, int start, int end, int left, int right)
+    {
+        if (right < start || left > end) return int.MaxValue; // No overlap
+        if (left <= start && end <= right) return tree[node]; // Complete overlap
+
+        int mid = (start + end) / 2;
+        int leftMin = Query(2 * node + 1, start, mid, left, right);
+        int rightMin = Query(2 * node + 2, mid + 1, end, left, right);
+        return Math.Min(leftMin, rightMin);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int[] arr = { 1, 3, 5, 7, 9, 11, 15 };
+        SegmentTree segTree = new SegmentTree(arr);
+
+        int[,] queries = { { 1, 4 }, { 2, 5 }, { 0, 6 } };
+        
+        foreach (var query in queries)
+        {
+            Console.WriteLine(segTree.Query(query[0], query[1]));
+        }
+    }
 }
